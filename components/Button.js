@@ -33,9 +33,7 @@ export const ButtonStyles = ({
     background-color: black;
     color: white;
   `}
-  ${white &&
-  !outline &&
-  css`
+  ${white && !outline && css`
     background-color: white;
     color: black;
   `}

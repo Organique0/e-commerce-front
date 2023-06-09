@@ -10,9 +10,9 @@ const ProductGrid = styled.div`
 `;
 
 const Title = styled.h2`
-font-size:2rem;
-margin:30px 0 20px;
-font-weight:500;
+  font-size: 2rem;
+  margin: 30px 0 20px;
+  font-weight: 500;
 `;
 export default function NewProducts({ products }) {
   return (
@@ -20,7 +20,7 @@ export default function NewProducts({ products }) {
       <Title>NewProducts</Title>
       <ProductGrid>
         {products?.length > 0 &&
-          products.map((product) => <ProductBox {...product} />)}
+          products.map((product, key) => <ProductBox {...product} key={key} />)}
       </ProductGrid>
     </Center>
   );

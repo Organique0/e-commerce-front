@@ -6,6 +6,9 @@ const ProductGrid = styled.div`
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 20px;
   padding-top: 20px;
+  @media screen and (max-width: 586px) {
+    grid-template-columns: 1fr 1fr;
+  }
 `;
 
 export default function ProductsGrid({ products }) {

@@ -15,6 +15,9 @@ const ColumnsWrapper = styled.div`
   grid-template-columns: 1.3fr 0.7fr;
   gap: 40px;
   margin-top: 40px;
+  @media screen and (max-width: 775px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const ProductInfoCell = styled.td`
@@ -24,7 +27,7 @@ const ProductInfoCell = styled.td`
 const ProductImageBox = styled.div`
   width: 100px;
   height: 100px;
-  padding: 10px;
+  padding: 3px;
   border-radius: 10px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
@@ -34,10 +37,24 @@ const ProductImageBox = styled.div`
     max-width: 80px;
     max-height: 80px;
   }
+  @media screen and (max-width: 420px) {
+    img {
+      max-width: 70px;
+      max-height: 70px;
+    }
+    width: 80px;
+    height: 80px;
+    padding: 3px;
+  }
 `;
 
 const QuantityLabel = styled.span`
   padding: 0 3px;
+  display: inline-block;
+  @media screen and (max-width: 340px) {
+    display: block;
+    padding: 0 15px;
+  }
 `;
 
 const CityHolder = styled.div`

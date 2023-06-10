@@ -16,6 +16,9 @@ const ColWrap = styled.div`
   grid-template-columns: 1.2fr 1.2fr;
   gap: 40px;
   margin-top: 40px;
+  @media screen and (max-width: 586px) {
+    grid-template-columns: 1fr;
+  }
 `;
 const PriceRow = styled.div`
   gap: 20px;

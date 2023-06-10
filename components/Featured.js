@@ -27,6 +27,17 @@ const ColumnsWrapper = styled.div`
   img {
     max-width: 100%;
   }
+  @media screen and (max-width: 586px) {
+    grid-template-columns: 1fr;
+    div:nth-child(1) {
+      order: 1;
+    }
+    img {
+      max-width: 70%;
+      margin: auto;
+    }
+    gap: 0px;
+  }
 `;
 const Column = styled.div`
   display: flex;
@@ -37,6 +48,7 @@ const ButtonsWrapper = styled.div`
   gap: 10px;
   margin-top: 25px;
 `;
+
 export default function Featured({ product }) {
   const { addProduct } = useContext(CartContext);
 
@@ -54,7 +66,7 @@ export default function Featured({ product }) {
               <Desc>{product.description}</Desc>
               <ButtonsWrapper>
                 <ButtonLink
-                  href={"/products/" + product._id}
+                  href={"/product/" + product._id}
                   white="true"
                   outline="true"
                 >

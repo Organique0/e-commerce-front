@@ -4,6 +4,7 @@ import Center from "@/components/Center";
 import Header from "@/components/Header";
 import Input from "@/components/Input";
 import Table from "@/components/StyledTable";
+import WhiteBox from "@/components/WhiteBox";
 import styled from "@emotion/styled";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
@@ -14,12 +15,6 @@ const ColumnsWrapper = styled.div`
   grid-template-columns: 1.3fr 0.7fr;
   gap: 40px;
   margin-top: 40px;
-`;
-
-const Box = styled.div`
-  background-color: white;
-  border-radius: 10px;
-  padding: 30px;
 `;
 
 const ProductInfoCell = styled.td`
@@ -51,7 +46,8 @@ const CityHolder = styled.div`
 `;
 
 export default function CartPage() {
-  const { cartProducts, addProduct, removeProduct } = useContext(CartContext);
+  const { cartProducts, addProduct, removeProduct, clearCart } =
+    useContext(CartContext);
   const [products, setProducts] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -59,6 +55,8 @@ export default function CartPage() {
   const [postalCode, setPostalCode] = useState("");
   const [streetAddress, setstreetAddress] = useState("");
   const [country, setCountry] = useState("");
+
+  const router = useRouter();
 
   useEffect(() => {
     if (cartProducts.length > 0) {
@@ -69,6 +67,12 @@ export default function CartPage() {
       setProducts([]);
     }
   }, [cartProducts]);
+
+  useEffect(() => {
+    if (router.query.success === "true") {
+      clearCart();
+    }
+  }, [router]);
 
   function moreOfThisProduct(id) {
     addProduct(id);
@@ -100,28 +104,26 @@ export default function CartPage() {
     total += price;
   }
 
-  const router = useRouter();
   if (router.query.success === "true") {
     return (
       <>
         <Header />
         <Center>
           <ColumnsWrapper>
-            <Box>
+            <WhiteBox>
               <p>thank you for your order.</p>
-            </Box>
+            </WhiteBox>
           </ColumnsWrapper>
         </Center>
       </>
     );
   }
-
   return (
     <>
       <Header />
       <Center>
         <ColumnsWrapper>
-          <Box>
+          <WhiteBox>
             <h2>Your cart</h2>
             {!cartProducts?.length && <div>your cart is empty</div>}
             {products?.length > 0 && (
@@ -176,9 +178,9 @@ export default function CartPage() {
                 </tbody>
               </Table>
             )}
-          </Box>
+          </WhiteBox>
           {!!cartProducts?.length && (
-            <Box>
+            <WhiteBox>
               <h2>order information</h2>
               <Input
                 type="text"
@@ -227,7 +229,7 @@ export default function CartPage() {
               <Button block black onClick={doPayment}>
                 Continue to payment
               </Button>
-            </Box>
+            </WhiteBox>
           )}
         </ColumnsWrapper>
       </Center>

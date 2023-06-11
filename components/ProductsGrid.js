@@ -1,6 +1,5 @@
 import ProductBox from "./ProductBox";
 import styled from "@emotion/styled";
-
 const ProductGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -11,11 +10,22 @@ const ProductGrid = styled.div`
   }
 `;
 
-export default function ProductsGrid({ products }) {
-  return (
-    <ProductGrid>
-      {products?.length > 0 &&
-        products.map((product, key) => <ProductBox {...product} key={key} />)}
-    </ProductGrid>
-  );
+export default function ProductsGrid({ products, type, url, name }) {
+  console.log(type);
+  if (type === "category") {
+    return (
+      <ProductGrid>
+        {products?.length > 0 &&
+          products.map((product, key) => <ProductBox {...product} key={key} />)}
+        <ProductBox type="category" url={url} name={name} />
+      </ProductGrid>
+    );
+  } else {
+    return (
+      <ProductGrid>
+        {products?.length > 0 &&
+          products.map((product, key) => <ProductBox {...product} key={key} />)}
+      </ProductGrid>
+    );
+  }
 }

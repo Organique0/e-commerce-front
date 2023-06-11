@@ -4,6 +4,7 @@ import CartIcon from "./icons/CartIcon";
 import Link from "next/link";
 import { useContext } from "react";
 import { CartContext } from "./CartContext";
+import {ProductTitle} from "@/components/Title";
 
 const WhiteBox = styled(Link)`
   background-color: white;
@@ -21,14 +22,6 @@ const WhiteBox = styled(Link)`
 `;
 const ProductWrapper = styled.div``;
 
-const Title = styled(Link)`
-  font-weight: normal;
-  font-size: 0.9rem;
-  margin: 0;
-  color: inherit;
-  text-decoration: none;
-`;
-
 const ProductInfoBox = styled.div`
   margin-top: 5px;
 `;
@@ -45,27 +38,51 @@ const Price = styled.div`
   font-weight: 500;
 `;
 
-export default function ProductBox({ _id, title, description, price, images }) {
+const GrayBox = styled(Link)`
+  background-color: gray;
+  padding: 10px;
+  height: 150px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+
+  text-decoration: none;
+  color : white;
+`;
+
+export default function ProductBox({ _id, title, price, images, type, url, name }) {
   const { addProduct } = useContext(CartContext);
-  const url = "/product/" + _id;
-  return (
-    <ProductWrapper>
-      <WhiteBox href={url}>
-        <div>
-          <img src={images[0]}></img>
-        </div>
-      </WhiteBox>
-      <ProductInfoBox>
-        <Title href={url}>{title}</Title>
-        <PriceRow>
-          <Price>
-            <div>${price}</div>
-          </Price>
-          <Button primary outline onClick={() => addProduct(_id)}>
-            <CartIcon />
-          </Button>
-        </PriceRow>
-      </ProductInfoBox>
-    </ProductWrapper>
-  );
+  if (type !== "category") {
+    const url = "/product/" + _id;
+    return (
+      <ProductWrapper>
+        <WhiteBox href={url}>
+          <div>
+            <img src={images[0]}></img>
+          </div>
+        </WhiteBox>
+        <ProductInfoBox>
+          <ProductTitle href={url}>{title}</ProductTitle>
+          <PriceRow>
+            <Price>
+              <div>${price}</div>
+            </Price>
+            <Button primary outline onClick={() => addProduct(_id)}>
+              <CartIcon />
+            </Button>
+          </PriceRow>
+        </ProductInfoBox>
+      </ProductWrapper>
+    );
+  } else {
+    return (
+      <ProductWrapper>
+        <GrayBox href={url}>
+          Show all {name}
+        </GrayBox>
+      </ProductWrapper>
+    );
+  }
 }

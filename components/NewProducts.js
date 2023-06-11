@@ -1,4 +1,4 @@
-import Title from "@/components/Title";
+import { Title } from "@/components/Title";
 import Center from "./Center";
 import ProductsGrid from "./ProductsGrid";
 

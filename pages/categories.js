@@ -32,7 +32,7 @@ export default function AllCatPage({
             <TitleAndShowAll>
               <CatTitle>{mainCategory.name}</CatTitle>
               <div>
-                <Link href={"/category/" + mainCategory._id}>show all</Link>
+                <Link href={"/category/" + mainCategory.name}>show all</Link>
               </div>
             </TitleAndShowAll>
 
@@ -45,7 +45,12 @@ export default function AllCatPage({
                     <ProductsGrid
                       products={products}
                       type="category"
-                      url={"/category/" + subCategory._id}
+                      url={
+                        "/category/" +
+                        mainCategory.name +
+                        "/" +
+                        subCategory.name
+                      }
                       name={subCategory.name}
                     />
                   </div>

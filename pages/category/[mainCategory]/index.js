@@ -6,38 +6,14 @@ import Center from "@/components/Center";
 import { Product } from "@/models/product";
 import ProductsGrid from "@/components/ProductsGrid";
 import { useRouter } from "next/router";
-import styled from "@emotion/styled";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  CategoryHeader,
+  FiltersWrapper,
+  Filter
+} from "@/components/FiltersStyles";
 
-const CategoryHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const FiltersWrapper = styled.div`
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-  margin-left: 20px;
-`;
-const Filter = styled.div`
-  background-color: #ddd;
-  padding: 5px 10px;
-  border-radius: 5px;
-  display: flex;
-  gap: 5px;
-  select {
-    background: transparent;
-    border: none;
-    font-size: inherit;
-    color: #444;
-  }
-  span {
-    font-weight: 500;
-  }
-`;
 export default function mainCategoryPage({
   category,
   products,
@@ -50,11 +26,7 @@ export default function mainCategoryPage({
     category.properties.map((prop) => ({ name: prop.name, value: "all" }))
   );
 
-  const filtersRef = useRef(filters); // Create a ref to store the previous filters value
-
-  useEffect(() => {
-    filtersRef.current = filters; // Update the ref whenever filters change
-  }, [filters]);
+  const [CurrentProuducts, setCurrentProuducts] = useState(products);
 
   useEffect(() => {
     const catIds = [category._id, ...(subCategories.map((c) => c._id) || [])];
@@ -68,14 +40,10 @@ export default function mainCategoryPage({
       }
     });
     const url = `/api/products?` + params.toString();
-    console.log(url);
     axios.get(url).then((response) => {
-      // Update filters only if the current filters value is different from the previous one
-      if (JSON.stringify(filtersRef.current) !== JSON.stringify(filters)) {
-        setFilters(response.data);
-      }
+      setCurrentProuducts(response.data);
     });
-  }, [filters, category, subCategories]);
+  }, [filters]);
 
   const handleFilterChange = (filterName, filterValue) => {
     const updatedFilters = filters.map((filter) =>
@@ -83,8 +51,6 @@ export default function mainCategoryPage({
     );
     setFilters(updatedFilters);
   };
-
-  console.log(filters);
 
   return (
     <>
@@ -102,7 +68,9 @@ export default function mainCategoryPage({
                   }}
                   value={filters.find((f) => f.name === prop.name)?.value || ""} // Access the value property
                 >
-                  <option key={`${prop._id}-${index}-null`} value="all" />
+                  <option key={`${prop._id}-${index}-null`} value="all">
+                    all
+                  </option>
                   {prop.values.map((value, valueIndex) => (
                     <option
                       value={value}
@@ -116,7 +84,7 @@ export default function mainCategoryPage({
             ))}
           </FiltersWrapper>
         </CategoryHeader>
-        <ProductsGrid products={products} />
+        <ProductsGrid products={CurrentProuducts} />
       </Center>
     </>
   );
@@ -130,7 +98,6 @@ export async function getServerSideProps(context) {
   const subCategories = await Category.find({ parent: category._id });
   const catIds = subCategories.map((c) => c._id);
   const products = await Product.find({ category: { $in: catIds } });
-  console.log(category);
   return {
     props: {
       category: JSON.parse(JSON.stringify(category)),

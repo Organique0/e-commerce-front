@@ -13,6 +13,7 @@ import {
   FiltersWrapper,
   Filter
 } from "@/components/FiltersStyles";
+import Spinner from "@/components/Spinner";
 
 export default function mainCategoryPage({
   category,
@@ -26,13 +27,17 @@ export default function mainCategoryPage({
     category.properties.map((prop) => ({ name: prop.name, value: "all" }))
   );
 
-  const [CurrentProuducts, setCurrentProuducts] = useState(products);
+  const [currentProducts, setCurrentProducts] = useState(products);
+  const [sort, setSort] = useState("_id-desc");
+  const [loadingProuducts, setLoadingProducts] = useState(false);
 
   useEffect(() => {
+    setLoadingProducts(true);
     const catIds = [category._id, ...(subCategories.map((c) => c._id) || [])];
 
     const params = new URLSearchParams();
     params.set("categories", catIds.join(","));
+    params.set("sort", sort);
 
     filters.forEach((element) => {
       if (element.value !== "all") {
@@ -41,9 +46,10 @@ export default function mainCategoryPage({
     });
     const url = `/api/products?` + params.toString();
     axios.get(url).then((response) => {
-      setCurrentProuducts(response.data);
+      setCurrentProducts(response.data);
+      setLoadingProducts(false);
     });
-  }, [filters]);
+  }, [filters, sort]);
 
   const handleFilterChange = (filterName, filterValue) => {
     const updatedFilters = filters.map((filter) =>
@@ -82,9 +88,26 @@ export default function mainCategoryPage({
                 </select>
               </Filter>
             ))}
+            <Filter>
+              <span>sorting:</span>
+              <select value={sort} onChange={(e) => setSort(e.target.value)}>
+                <option value="price-asc">price, lowest first</option>
+                <option value="price-desc">price, highest first</option>
+                <option value="_id-desc">newest first</option>
+                <option value="_id-asc">oldest first</option>
+              </select>
+            </Filter>
           </FiltersWrapper>
         </CategoryHeader>
-        <ProductsGrid products={CurrentProuducts} />
+        {loadingProuducts && <Spinner fullWidth />}
+        {!loadingProuducts && (
+          <div>
+            {currentProducts.length > 0 && (
+              <ProductsGrid products={currentProducts} />
+            )}
+            {currentProducts.length === 0 && <div>No products found</div>}
+          </div>
+        )}
       </Center>
     </>
   );

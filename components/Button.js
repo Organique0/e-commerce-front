@@ -19,6 +19,7 @@ export const ButtonStyles = ({
   text-decoration: none;
   font-family: Montserrat;
   font-weight: 500;
+  font-size: 15px;
   svg {
     height: 16px;
     margin-right: 5px;
@@ -33,7 +34,9 @@ export const ButtonStyles = ({
     background-color: black;
     color: white;
   `}
-  ${white && !outline && css`
+  ${white &&
+  !outline &&
+  css`
     background-color: white;
     color: black;
   `}

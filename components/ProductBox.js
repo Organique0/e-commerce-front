@@ -1,10 +1,8 @@
 import styled from "@emotion/styled";
-import Button from "./Button";
 import CartIcon from "./icons/CartIcon";
 import Link from "next/link";
-import { useContext } from "react";
-import { CartContext } from "./CartContext";
-import {ProductTitle} from "@/components/Title";
+import { ProductTitle } from "@/components/Title";
+import FlyingButton from "./FlyingButton";
 
 const WhiteBox = styled(Link)`
   background-color: white;
@@ -49,18 +47,25 @@ const GrayBox = styled(Link)`
   border-radius: 10px;
 
   text-decoration: none;
-  color : white;
+  color: white;
 `;
 
-export default function ProductBox({ _id, title, price, images, type, url, name }) {
-  const { addProduct } = useContext(CartContext);
+export default function ProductBox({
+  _id,
+  title,
+  price,
+  images,
+  type,
+  url,
+  name
+}) {
   if (type !== "category") {
     const url = "/product/" + _id;
     return (
       <ProductWrapper>
         <WhiteBox href={url}>
           <div>
-            <img src={images[0]}></img>
+            <img src={images?.[0]}></img>
           </div>
         </WhiteBox>
         <ProductInfoBox>
@@ -69,9 +74,9 @@ export default function ProductBox({ _id, title, price, images, type, url, name 
             <Price>
               <div>${price}</div>
             </Price>
-            <Button primary outline onClick={() => addProduct(_id)}>
+            <FlyingButton src={images?.[0]} _id={_id}>
               <CartIcon />
-            </Button>
+            </FlyingButton>
           </PriceRow>
         </ProductInfoBox>
       </ProductWrapper>
@@ -79,9 +84,7 @@ export default function ProductBox({ _id, title, price, images, type, url, name 
   } else {
     return (
       <ProductWrapper>
-        <GrayBox href={url}>
-          Show all {name}
-        </GrayBox>
+        <GrayBox href={url}>Show all {name}</GrayBox>
       </ProductWrapper>
     );
   }

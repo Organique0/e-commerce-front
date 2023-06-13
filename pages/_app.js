@@ -10,6 +10,9 @@ const GlobalStyles = () => (
         font-family: 'Montserrat', sans-serif;
         background-color: #eee;
       }
+      html.sr .load-hidden {
+        visibility: hidden;
+       }
     `}
   />
 );

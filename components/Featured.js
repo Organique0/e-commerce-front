@@ -1,10 +1,9 @@
 import styled from "@emotion/styled";
 import Center from "./Center";
-import Button from "./Button";
 import ButtonLink from "./ButtonLink";
 import CartIcon from "./icons/CartIcon";
-import { useContext } from "react";
-import { CartContext } from "./CartContext";
+import FlyingButton from "./FlyingButton";
+import { RevealWrapper } from "next-reveal";
 
 const Bg = styled.div`
   background-color: #222;
@@ -50,37 +49,35 @@ const ButtonsWrapper = styled.div`
 `;
 
 export default function Featured({ product }) {
-  const { addProduct } = useContext(CartContext);
-
-  function addFeaturedToCart() {
-    addProduct(product._id);
-  }
-
   return (
     <Bg>
       <Center>
         <ColumnsWrapper>
           <Column>
             <div>
-              <Title>{product.title}</Title>
-              <Desc>{product.description}</Desc>
-              <ButtonsWrapper>
-                <ButtonLink
-                  href={"/product/" + product._id}
-                  white="true"
-                  outline="true"
-                >
-                  Read more
-                </ButtonLink>
-                <Button white onClick={addFeaturedToCart}>
-                  <CartIcon />
-                  add to cart
-                </Button>
-              </ButtonsWrapper>
+              <RevealWrapper origin={"left"} className="load-hidden">
+                <Title>{product.title}</Title>
+                <Desc>{product.description}</Desc>
+                <ButtonsWrapper>
+                  <ButtonLink
+                    href={"/product/" + product._id}
+                    white="true"
+                    outline="true"
+                  >
+                    Read more
+                  </ButtonLink>
+                  <FlyingButton _id={product._id} src={product.images[0]} white>
+                    <CartIcon />
+                    add to cart
+                  </FlyingButton>
+                </ButtonsWrapper>
+              </RevealWrapper>
             </div>
           </Column>
           <Column>
-            <img src="https://www.a1.si/o/commerce-media/products/293672195/prenosni-racunalnik-apple-macbook-prom2-13-3-8c-256gb/294144608/MacBook_Pro_13_in_Silver_PDP_Image_Position-1__WWEN.png?download=false"></img>
+            <RevealWrapper>
+              <img src="https://www.a1.si/o/commerce-media/products/293672195/prenosni-racunalnik-apple-macbook-prom2-13-3-8c-256gb/294144608/MacBook_Pro_13_in_Silver_PDP_Image_Position-1__WWEN.png?download=false"></img>
+            </RevealWrapper>
           </Column>
         </ColumnsWrapper>
       </Center>

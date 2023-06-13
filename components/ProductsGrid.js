@@ -1,5 +1,7 @@
 import ProductBox from "./ProductBox";
 import styled from "@emotion/styled";
+import { RevealWrapper } from "next-reveal";
+
 const ProductGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -11,20 +13,29 @@ const ProductGrid = styled.div`
 `;
 
 export default function ProductsGrid({ products, type, url, name }) {
-  console.log(type);
   if (type === "category") {
     return (
       <ProductGrid>
         {products?.length > 0 &&
-          products.map((product, key) => <ProductBox {...product} key={key} />)}
-        <ProductBox type="category" url={url} name={name} />
+          products.map((product, key) => (
+            <RevealWrapper delay={key * 100} key={key} className="load-hidden">
+              <ProductBox {...product} key={key} />
+            </RevealWrapper>
+          ))}
+        <RevealWrapper className="load-hidden">
+          <ProductBox type="category" url={url} name={name} />
+        </RevealWrapper>
       </ProductGrid>
     );
   } else {
     return (
-      <ProductGrid>
+      <ProductGrid interval={100}>
         {products?.length > 0 &&
-          products.map((product, key) => <ProductBox {...product} key={key} />)}
+          products.map((product, key) => (
+            <RevealWrapper delay={key * 100} key={key} className="load-hidden">
+              <ProductBox {...product} key={key} />
+            </RevealWrapper>
+          ))}
       </ProductGrid>
     );
   }

@@ -23,15 +23,15 @@ const ColumnsWrapper = styled.div`
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
   gap: 40px;
-  img {
+  img.main {
     max-width: 100%;
   }
   @media screen and (max-width: 586px) {
     grid-template-columns: 1fr;
-    div:nth-child(1) {
+    div:nth-of-type(1) {
       order: 1;
     }
-    img {
+    img.main {
       max-width: 70%;
       margin: auto;
     }
@@ -55,7 +55,7 @@ export default function Featured({ product }) {
         <ColumnsWrapper>
           <Column>
             <div>
-              <RevealWrapper origin={"left"} className="load-hidden">
+              <RevealWrapper origin={"left"} className="load-hidden" delay={0}>
                 <Title>{product.title}</Title>
                 <Desc>{product.description}</Desc>
                 <ButtonsWrapper>
@@ -66,7 +66,11 @@ export default function Featured({ product }) {
                   >
                     Read more
                   </ButtonLink>
-                  <FlyingButton _id={product._id} src={product.images[0]} white>
+                  <FlyingButton
+                    _id={product._id}
+                    src={product.images[0]}
+                    white="true"
+                  >
                     <CartIcon />
                     add to cart
                   </FlyingButton>
@@ -75,8 +79,11 @@ export default function Featured({ product }) {
             </div>
           </Column>
           <Column>
-            <RevealWrapper>
-              <img src="https://www.a1.si/o/commerce-media/products/293672195/prenosni-racunalnik-apple-macbook-prom2-13-3-8c-256gb/294144608/MacBook_Pro_13_in_Silver_PDP_Image_Position-1__WWEN.png?download=false"></img>
+            <RevealWrapper delay={0}>
+              <img
+                className={"main"}
+                src="https://www.a1.si/o/commerce-media/products/293672195/prenosni-racunalnik-apple-macbook-prom2-13-3-8c-256gb/294144608/MacBook_Pro_13_in_Silver_PDP_Image_Position-1__WWEN.png?download=false"
+              ></img>
             </RevealWrapper>
           </Column>
         </ColumnsWrapper>

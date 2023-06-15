@@ -5,11 +5,13 @@ import Center from "./Center";
 import { useContext, useState } from "react";
 import { CartContext } from "./CartContext";
 import MenuIcon from "./icons/Menu";
+import SearchIcon from "./icons/SearchIcon";
 
 const StyledHeader = styled.header`
   background-color: #222;
   position: sticky;
   top: 0;
+  z-index: 10;
 `;
 const Logo = styled(Link)`
   color: #fff;
@@ -27,6 +29,7 @@ const NavLink = styled(Link)`
   color: #aaa;
   text-decoration: none;
   display: block;
+  min-width: 20px;
   @media screen and (max-width: 586px) {
     height: 5%;
     padding: 0.5em;
@@ -37,11 +40,29 @@ const NavLink = styled(Link)`
     border-bottom: 1px solid;
   }
 `;
+const SearchLink = styled(Link)`
+  color: #aaa;
+  text-decoration: none;
+  display: block;
+  min-width: 20px;
+  padding-top:2px;
+  @media screen and (max-width: 586px) {
+    display: none;
+  }
+`;
+
 const StyledNav = styled.nav`
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
   gap: 15px;
+  a {
+    svg {
+      width: 18px;
+      height: 18px;
+      color: inherit;
+    }
+  }
 
   @media screen and (max-width: 586px) {
     ${(props) => (props.MobileNavActive ? `display: block;` : `display: none;`)}
@@ -66,6 +87,23 @@ const NavButton = styled.button`
   }
 `;
 
+const SideIcons = styled.div`
+  @media screen and (min-width: 586px) {
+    display: none;
+  }
+  display: flex;
+  align-items: center;
+  a {
+    display: inline-block;
+    min-width: 20px;
+    color: white;
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+`;
+
 export default function Header() {
   const [MobileNavActive, setMobileNavActive] = useState(false);
   const { cartProducts } = useContext(CartContext);
@@ -79,10 +117,18 @@ export default function Header() {
             <NavLink href="/categories">categories</NavLink>
             <NavLink href="/account">account</NavLink>
             <NavLink href="/cart">Cart ({cartProducts.length})</NavLink>
+            <SearchLink href="/search" className="search">
+              <SearchIcon />
+            </SearchLink>
           </StyledNav>
-          <NavButton onClick={() => setMobileNavActive((prev) => !prev)}>
-            <MenuIcon />
-          </NavButton>
+          <SideIcons>
+            <SearchLink href="/search">
+              <SearchIcon />
+            </SearchLink>
+            <NavButton onClick={() => setMobileNavActive((prev) => !prev)}>
+              <MenuIcon />
+            </NavButton>
+          </SideIcons>
         </Wrapper>
       </Center>
     </StyledHeader>

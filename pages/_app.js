@@ -1,6 +1,7 @@
 import { CartContextProvider } from "@/components/CartContext";
 import { Global } from "@emotion/react";
-
+import { SessionProvider } from "next-auth/react";
+import { primary } from "@/lib/colors";
 const GlobalStyles = () => (
   <Global
     styles={`
@@ -13,17 +14,27 @@ const GlobalStyles = () => (
       html.sr .load-hidden {
         visibility: hidden;
        }
+       hr{
+        display:block;
+        border:0;
+        border-top:1px solid ${primary};
+       }
     `}
   />
 );
 
-export default function App({ Component, pageProps }) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps }
+}) {
   return (
     <>
       <GlobalStyles />
-      <CartContextProvider>
-        <Component {...pageProps} />
-      </CartContextProvider>
+      <SessionProvider session={session}>
+        <CartContextProvider>
+          <Component {...pageProps} />
+        </CartContextProvider>
+      </SessionProvider>
     </>
   );
 }

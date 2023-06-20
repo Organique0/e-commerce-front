@@ -7,6 +7,7 @@ const StyledInput = styled.input`
   border: 1px solid lightgray;
   box-sizing: border-box;
   border-radius: 5px;
+  font-size: 1.3rem;
 `;
 
 export default function Input(props) {

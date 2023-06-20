@@ -7,50 +7,79 @@ import styled from "@emotion/styled";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { debounce } from "lodash";
+import { useForm } from "react-hook-form";
+import SearchIcon from "@/components/icons/SearchIcon";
 
 const SearchInput = styled(Input)`
-  padding: 5px 10px;
+  width: 90%;
+  margin-bottom: 0;
+  border: 1px solid gray;
+  box-sizing: border-box;
   border-radius: 0;
-  margin: 30px 0 30px;
-  font-size: 1.4rem;
+  height: 40px;
+`;
+
+const SubmitButton = styled.button`
+  width: 40px;
+  height: 40px;
+  border-radius: 0;
+  border: 1px solid gray;
+  svg {
+    color: gray;
+  }
+`;
+
+const FormContent = styled.div`
+  display: flex;
 `;
 
 export default function SearchPage() {
   const [phrase, setPhrase] = useState("");
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const debouncedSearch = useCallback(debounce(searchProducts, 500), []);
+  const [noProducts, setNoProducts] = useState(false);
+  const { handleSubmit } = useForm();
 
-  useEffect(() => {
-    if (phrase.length > 0) {
+  function onSubmit() {
+    if (phrase != "") {
       setLoading(true);
-      debouncedSearch(phrase);
+      axios.get("api/products?phrase=" + phrase).then((response) => {
+        setProducts(response.data);
+        setLoading(false);
+        if (response.data.length === 0) {
+          setNoProducts(true);
+        } else {
+          setNoProducts(false);
+        }
+      });
     } else {
+      setProducts([]);
+    }
+  }
+  useEffect(() => {
+    if (phrase.length == 0) {
       setProducts([]);
     }
   }, [phrase]);
 
-  function searchProducts(phrase) {
-    axios
-      .get("api/products?phrase=" + encodeURIComponent(phrase))
-      .then((response) => {
-        setProducts(response.data);
-        setLoading(false);
-      });
-  }
   return (
     <>
       <Header />
       <Center>
-        <SearchInput
-          placeholder="search for products"
-          autoFocus
-          value={phrase}
-          onChange={(e) => setPhrase(e.target.value)}
-        />
-        {!loading && phrase !== "" && products.length === 0 && (
-          <h2>no products found</h2>
-        )}
+        <form onSubmit={handleSubmit(onSubmit)} style={{ marginTop: "5%" }}>
+          <FormContent>
+            <SearchInput
+              placeholder="search for products"
+              autoFocus
+              onChange={(e) => setPhrase(e.target.value)}
+            />
+            <SubmitButton type="submit">
+              <SearchIcon />
+            </SubmitButton>
+          </FormContent>
+        </form>
+
+        {!loading && noProducts && <h2>no products found</h2>}
         {loading && <Spinner fullWidth={true} />}
         {!loading && products.length > 0 && (
           <ProductsGrid products={products} />

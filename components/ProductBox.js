@@ -3,8 +3,14 @@ import CartIcon from "./icons/CartIcon";
 import Link from "next/link";
 import { ProductTitle } from "@/components/Title";
 import FlyingButton from "./FlyingButton";
+import HeartOutlineIcon from "./icons/HeartOutline";
+import { useEffect, useState } from "react";
+import HeartFilledIcon from "./icons/HeartFilled";
+import { primary } from "@/lib/colors";
+import axios from "axios";
 
 const WhiteBox = styled(Link)`
+  position: relative;
   background-color: white;
   padding: 10px;
   height: 150px;
@@ -50,6 +56,22 @@ const GrayBox = styled(Link)`
   color: white;
 `;
 
+const WishlistButton = styled.button`
+  border: 0;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  background-color: transparent;
+  svg {
+    width: 20px;
+    color: ${primary};
+  }
+  ${(props) => (props.wished ? "color:red" : "color:black")}
+`;
+
 export default function ProductBox({
   _id,
   title,
@@ -57,14 +79,32 @@ export default function ProductBox({
   images,
   type,
   url,
-  name
+  name,
+  wished = false
 }) {
+  const [isWished, setWished] = useState(wished);
+
+  function addToWishlist(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const nextValueOfWished = !isWished;
+    axios
+      .post("/api/wishlist", {
+        product: _id
+      })
+      .then(() => {});
+    setWished(nextValueOfWished);
+  }
+
   if (type !== "category") {
     const url = "/product/" + _id;
     return (
       <ProductWrapper>
         <WhiteBox href={url}>
           <div>
+            <WishlistButton onClick={addToWishlist} wished={isWished}>
+              {isWished ? <HeartFilledIcon /> : <HeartOutlineIcon />}
+            </WishlistButton>
             <img src={images?.[0]}></img>
           </div>
         </WhiteBox>

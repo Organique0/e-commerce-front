@@ -12,24 +12,14 @@ const ProductGrid = styled.div`
   }
 `;
 
-export default function ProductsGrid({
-  products,
-  type,
-  url,
-  name,
-  wishedProducts=[]
-}) {
+export default function ProductsGrid({ products, type, url, name }) {
   if (type === "category") {
     return (
       <ProductGrid>
         {products?.length > 0 &&
           products.map((product, key) => (
             <RevealWrapper delay={key * 100} key={key} className="load-hidden">
-              <ProductBox
-                {...product}
-                key={key}
-                wished={wishedProducts.includes(product._id)}
-              />
+              <ProductBox {...product} key={key} />
             </RevealWrapper>
           ))}
         <RevealWrapper className="load-hidden">
@@ -43,11 +33,7 @@ export default function ProductsGrid({
         {products?.length > 0 &&
           products.map((product, key) => (
             <RevealWrapper delay={key * 100} key={key} className="load-hidden">
-              <ProductBox
-                {...product}
-                key={key}
-                wished={wishedProducts.includes(product._id)}
-              />
+              <ProductBox {...product} key={key} />
             </RevealWrapper>
           ))}
       </ProductGrid>

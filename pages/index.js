@@ -10,13 +10,13 @@ import { authOptions } from "./api/auth/[...nextauth]";
 export default function HomePage({
   featuredProduct,
   newProducts,
-  wishedNewProducts
 }) {
+  
   return (
     <div>
       <Header />
       <Featured product={featuredProduct} />
-      <NewProducts products={newProducts} wishedProducts={wishedNewProducts} />
+      <NewProducts products={newProducts} />
     </div>
   );
 }

@@ -6,12 +6,15 @@ const ProductSchema = new Schema(
     description: String,
     price: { type: Number, required: true },
     images: [{ type: String }],
-    category: { type: mongoose.Types.ObjectId, ref: "Category" },
-    properties: { type: Object }
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+      sparse: true
+    }
   },
   {
     timestamps: true
   }
 );
 
-export const Product = models.Product || model("Product", ProductSchema);
+export const Product = models?.Product || model("Product", ProductSchema);

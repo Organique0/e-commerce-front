@@ -8,16 +8,16 @@ export default async function handle(req, res) {
   const { user } = await getServerSession(req, res, authOptions);
   if (req.method === "POST") {
     const { product } = req.body;
-
     const wishedDoc = await WishedProduct.findOne({
       userEmail: user.email,
       product
     });
     if (wishedDoc) {
       await WishedProduct.findByIdAndDelete(wishedDoc._id);
+      res.json("wish deleted");
     } else {
       await WishedProduct.create({ userEmail: user.email, product });
+      res.json("wish created");
     }
   }
-  res.json("wish granted");
 }

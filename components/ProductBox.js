@@ -4,10 +4,10 @@ import Link from "next/link";
 import { ProductTitle } from "@/components/Title";
 import FlyingButton from "./FlyingButton";
 import HeartOutlineIcon from "./icons/HeartOutline";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import HeartFilledIcon from "./icons/HeartFilled";
 import { primary } from "@/lib/colors";
-import axios from "axios";
+import { WishContext } from "./WishContext";
 
 const WhiteBox = styled(Link)`
   position: relative;
@@ -79,21 +79,13 @@ export default function ProductBox({
   images,
   type,
   url,
-  name,
-  wished = false
+  name
 }) {
-  const [isWished, setWished] = useState(wished);
+  const { addToWishlist, wished } = useContext(WishContext);
+  const [isWished, setWishedItem] = useState(wished.includes(_id));
 
-  function addToWishlist(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    const nextValueOfWished = !isWished;
-    axios
-      .post("/api/wishlist", {
-        product: _id
-      })
-      .then(() => {});
-    setWished(nextValueOfWished);
+  function switchWished() {
+    setWishedItem(!isWished);
   }
 
   if (type !== "category") {
@@ -102,7 +94,13 @@ export default function ProductBox({
       <ProductWrapper>
         <WhiteBox href={url}>
           <div>
-            <WishlistButton onClick={addToWishlist} wished={isWished}>
+            <WishlistButton
+              onClick={(e) => {
+                addToWishlist(e, _id);
+                switchWished();
+              }}
+              wished={isWished}
+            >
               {isWished ? <HeartFilledIcon /> : <HeartOutlineIcon />}
             </WishlistButton>
             <img src={images?.[0]}></img>

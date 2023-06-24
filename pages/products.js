@@ -4,34 +4,25 @@ import { Title } from "@/components/Title";
 import ProductsGrid from "@/components/ProductsGrid";
 import { mongooseConnect } from "@/lib/mongoose";
 import { Product } from "@/models/product";
-import { WishedProduct } from "@/models/wishedProduct";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]";
 
-export default function productsPage({ products, wishedAllProducts }) {
+export default function productsPage({ products }) {
   return (
     <>
       <Header />
       <Center>
         <Title>all products</Title>
-        <ProductsGrid products={products} wishedProducts={wishedAllProducts} />
+        <ProductsGrid products={products} />
       </Center>
     </>
   );
 }
 
-export async function getServerSideProps(ctx) {
+export async function getServerSideProps() {
   await mongooseConnect();
   const products = await Product.find({}, null, { sort: { _id: -1 } });
-  const { user } = await getServerSession(ctx.req, ctx.res, authOptions);
-  const wishedAllProducts = await WishedProduct.find({
-    userEmail: user.email,
-    product: products.map((p) => p._id.toString())
-  });
   return {
     props: {
-      products: JSON.parse(JSON.stringify(products)),
-      wishedAllProducts: wishedAllProducts.map((i) => i.product.toString())
+      products: JSON.parse(JSON.stringify(products))
     }
   };
 }

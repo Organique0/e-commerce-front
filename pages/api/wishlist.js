@@ -20,4 +20,11 @@ export default async function handle(req, res) {
       res.json("wish created");
     }
   }
+  if (req.method == "GET") {
+    res.json(
+      await WishedProduct.find({ userEmail: user.email })
+        .populate("product")
+        .exec()
+    );
+  }
 }

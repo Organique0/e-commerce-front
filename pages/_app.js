@@ -3,10 +3,7 @@ import { WishContextProvider } from "@/components/WishContext";
 import { Global } from "@emotion/react";
 import { SessionProvider } from "next-auth/react";
 import { primary } from "@/lib/colors";
-import { mongooseConnect } from "@/lib/mongoose";
-import { Product } from "@/models/product";
-import { WishedProduct } from "@/models/wishedProduct";
-import { getServerSession } from "next-auth";
+
 const GlobalStyles = () => (
   <Global
     styles={`
@@ -30,8 +27,9 @@ const GlobalStyles = () => (
 
 export default function App({
   Component,
-  pageProps: { session, ...pageProps },
-  wishedAllProducts
+  pageProps: { ...pageProps },
+  wishedAllProducts,
+  session
 }) {
   return (
     <>
@@ -47,14 +45,16 @@ export default function App({
   );
 }
 
-App.getInitialProps = async (ctx) => {
-  await mongooseConnect();
-  const products = await Product.find();
-  const wishedAllProducts = await WishedProduct.find({
-    userEmail: "grabnar.luka@gmail.com",
-    product: products.map((p) => p._id.toString())
-  });
-  return {
-    wishedAllProducts: wishedAllProducts.map((i) => i.product.toString())
-  };
+import { fetchDbData } from "./api/wishes";
+App.getInitialProps = async (appContext) => {
+  let prop;
+
+  if (appContext.ctx.req) {
+    // Checks if running on server
+    prop = await fetchDbData(); // Call logic directly on the server
+  } else {
+    const res = await fetch("/api/wishes"); // Make API call on the client
+    prop = await res.json();
+  }
+  return { wishedAllProducts: prop };
 };

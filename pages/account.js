@@ -6,10 +6,12 @@ import Button from "@/components/Button";
 import styled from "@emotion/styled";
 import WhiteBox from "@/components/WhiteBox";
 import { RevealWrapper } from "next-reveal";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Input from "@/components/Input";
 import axios from "axios";
 import Spinner from "@/components/Spinner";
+import ProductBox from "@/components/ProductBox";
+import { WishContext } from "@/components/WishContext";
 
 const CityHolder = styled.div`
   display: flex;
@@ -22,6 +24,12 @@ const ColsWrapper = styled.div`
   margin: 40px 0;
 `;
 
+const WishedProductsGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+`;
+
 export default function AccountPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -31,7 +39,8 @@ export default function AccountPage() {
   const [country, setCountry] = useState("");
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
-
+  const [wishedProducts, setWishedProducts] = useState([]);
+  const { wished } = useContext(WishContext);
   async function login() {
     await signIn("google");
   }
@@ -40,7 +49,6 @@ export default function AccountPage() {
     const data = { name, email, streetAddress, city, postalCode, country };
     axios.put("/api/address", data);
   }
-
   useEffect(() => {
     setLoading(true);
     axios.get("/api/address").then((res) => {
@@ -51,8 +59,12 @@ export default function AccountPage() {
       setCountry(res.data.country);
       setEmail(res.data.email);
     });
-    setLoading(false);
+    axios.get("/api/wishlist").then((res) => {
+      setWishedProducts(res.data.map((p) => p.product));
+      setLoading(false);
+    });
   }, []);
+
   return (
     <>
       <Header />
@@ -63,6 +75,14 @@ export default function AccountPage() {
             <RevealWrapper delay={0}>
               <WhiteBox>
                 <h2>wishlist</h2>
+                <WishedProductsGrid>
+                  {loading && <Spinner fullWidth={true} />}
+                  {!loading &&
+                    wishedProducts.length > 0 &&
+                    wishedProducts.map((wp) => (
+                      <ProductBox {...wp} key={wp._id} />
+                    ))}
+                </WishedProductsGrid>
               </WhiteBox>
             </RevealWrapper>
           </div>

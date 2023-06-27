@@ -21,7 +21,7 @@ export default async function handle(req, res) {
           })
         );
       }
-    }else {
+    } else {
       res.json(null);
     }
   }

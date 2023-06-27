@@ -6,9 +6,8 @@ import { authOptions } from "./auth/[...nextauth]";
 export default async function handle(req, res) {
   await mongooseConnect();
   const session = await getServerSession(req, res, authOptions);
-
-  if (req.method === "POST") {
-    if (session && session.user) {
+  if (session && session.user) {
+    if (req.method === "POST") {
       const { product } = req.body;
       const wishedDoc = await WishedProduct.findOne({
         userEmail: session.user.email,
@@ -21,9 +20,9 @@ export default async function handle(req, res) {
         await WishedProduct.create({ userEmail: session.user.email, product });
         res.json("wish created");
       }
-    } else {
-      res.json(null);
     }
+  } else {
+    res.json(null);
   }
 
   if (req.method == "GET") {

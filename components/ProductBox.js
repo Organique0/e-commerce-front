@@ -8,7 +8,7 @@ import { useEffect, useState, useContext } from "react";
 import HeartFilledIcon from "./icons/HeartFilled";
 import { primary } from "@/lib/colors";
 import { WishContext } from "./WishContext";
-
+import { signIn, signOut, useSession } from "next-auth/react";
 const WhiteBox = styled(Link)`
   position: relative;
   background-color: white;
@@ -83,7 +83,7 @@ export default function ProductBox({
 }) {
   const { addToWishlist, wished } = useContext(WishContext);
   const [isWished, setWishedItem] = useState(wished.includes(_id));
-
+  const { data: session, status } = useSession();
   function switchWished() {
     setWishedItem(!isWished);
   }
@@ -101,7 +101,13 @@ export default function ProductBox({
               }}
               wished={isWished}
             >
-              {isWished ? <HeartFilledIcon /> : <HeartOutlineIcon />}
+              {session && session.user ? (
+                isWished ? (
+                  <HeartFilledIcon />
+                ) : (
+                  <HeartOutlineIcon />
+                )
+              ) : null}
             </WishlistButton>
             <img src={images?.[0]}></img>
           </div>

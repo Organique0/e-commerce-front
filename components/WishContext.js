@@ -5,27 +5,37 @@ export const WishContext = createContext({});
 
 export function WishContextProvider({ children, wishedAllProducts }) {
   const [wished, setWished] = useState(wishedAllProducts);
+  const [wishedProducts, setWishedProducts] = useState([]);
+  const [wishLoading, setWishLoading] = useState(false);
 
-  function addToWishlist(e, _id) {
+  async function fetchWishlistData() {
+    const res = await axios.get("/api/wishlist");
+    setWishedProducts(res.data.map((p) => p.product));
+  }
+  async function addToWishlist(e, _id) {
     e.preventDefault();
     e.stopPropagation();
+    let updatedWished;
     if (wished.includes(_id)) {
-      setWished((prevWished) => prevWished.filter((item) => item !== _id));
+      updatedWished = wished.filter((item) => item !== _id);
     } else {
-      setWished((prevWished) => [...prevWished, _id]);
+      updatedWished = [...wished, _id];
     }
-    axios
-      .post("/api/wishlist", {
-        product: _id
-      })
-      .then(() => {});
+    setWishLoading(true);
+    setWished(updatedWished);
+    await axios.post("/api/wishlist", { product: _id });
+    await fetchWishlistData();
+    setWishLoading(false);
   }
   return (
     <WishContext.Provider
       value={{
         wished,
+        wishedProducts,
         setWished,
-        addToWishlist
+        addToWishlist,
+        fetchWishlistData,
+        wishLoading
       }}
     >
       {children}

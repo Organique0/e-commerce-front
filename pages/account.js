@@ -39,8 +39,8 @@ export default function AccountPage() {
   const [country, setCountry] = useState("");
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
-  const [wishedProducts, setWishedProducts] = useState([]);
-  const { wished } = useContext(WishContext);
+
+  const { wishedProducts, wishLoading } = useContext(WishContext);
   async function login() {
     await signIn("google");
   }
@@ -59,10 +59,7 @@ export default function AccountPage() {
       setCountry(res.data.country);
       setEmail(res.data.email);
     });
-    axios.get("/api/wishlist").then((res) => {
-      setWishedProducts(res.data.map((p) => p.product));
-      setLoading(false);
-    });
+    setLoading(false);
   }, []);
 
   return (
@@ -76,8 +73,8 @@ export default function AccountPage() {
               <WhiteBox>
                 <h2>wishlist</h2>
                 <WishedProductsGrid>
-                  {loading && <Spinner fullWidth={true} />}
-                  {!loading &&
+                  {wishLoading && <Spinner fullWidth={true} />}
+                  {!wishLoading &&
                     wishedProducts.length > 0 &&
                     wishedProducts.map((wp) => (
                       <ProductBox {...wp} key={wp._id} />

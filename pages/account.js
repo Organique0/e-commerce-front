@@ -1,5 +1,4 @@
 import Header from "@/components/Header";
-import { Title } from "@/components/Title";
 import Center from "@/components/Center";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Button from "@/components/Button";
@@ -52,15 +51,18 @@ export default function AccountPage() {
   useEffect(() => {
     setLoading(true);
     axios.get("/api/address").then((res) => {
-      setName(res.data.name);
-      setStreetAddress(res.data.streetAddress);
-      setCity(res.data.city);
-      setPostalCode(res.data.postalCode);
-      setCountry(res.data.country);
-      setEmail(res.data.email);
+      if (res && res.data) {
+        setName(res.data.name);
+        setStreetAddress(res.data.streetAddress);
+        setCity(res.data.city);
+        setPostalCode(res.data.postalCode);
+        setCountry(res.data.country);
+        setEmail(res.data.email);
+      }
     });
     setLoading(false);
   }, []);
+  useEffect(() => {}, []);
 
   return (
     <>
@@ -72,6 +74,11 @@ export default function AccountPage() {
             <RevealWrapper delay={0}>
               <WhiteBox>
                 <h2>wishlist</h2>
+                {wishedProducts.length === 0 && (
+                  <>
+                    <p>Your wishlist is empty.</p>
+                  </>
+                )}
                 <WishedProductsGrid>
                   {wishLoading && <Spinner fullWidth={true} />}
                   {!wishLoading &&

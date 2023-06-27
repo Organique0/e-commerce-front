@@ -1,12 +1,23 @@
 import axios from "axios";
-const { createContext, useState } = require("react");
-
+import { signIn, signOut, useSession } from "next-auth/react";
+const { createContext, useState, useEffect } = require("react");
 export const WishContext = createContext({});
 
 export function WishContextProvider({ children, wishedAllProducts }) {
   const [wished, setWished] = useState(wishedAllProducts);
   const [wishedProducts, setWishedProducts] = useState([]);
   const [wishLoading, setWishLoading] = useState(false);
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === "authenticated" && session) {
+      fetchWishlistData();
+      setWished(wishedAllProducts);
+    } else {
+      setWishedProducts([]);
+      setWished([]);
+    }
+  }, [session, status]);
 
   async function fetchWishlistData() {
     const res = await axios.get("/api/wishlist");
@@ -23,8 +34,10 @@ export function WishContextProvider({ children, wishedAllProducts }) {
     }
     setWishLoading(true);
     setWished(updatedWished);
-    await axios.post("/api/wishlist", { product: _id });
-    await fetchWishlistData();
+    const response = await axios.post("/api/wishlist", { product: _id });
+    if (response.data !== null) {
+      await fetchWishlistData();
+    }
     setWishLoading(false);
   }
   return (

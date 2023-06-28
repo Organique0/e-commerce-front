@@ -1,3 +1,4 @@
+import { primary } from "@/lib/colors";
 import styled from "@emotion/styled";
 
 const StyledInput = styled.input`
@@ -8,6 +9,13 @@ const StyledInput = styled.input`
   box-sizing: border-box;
   border-radius: 5px;
   font-size: 1.3rem;
+  &.redBorder {
+    border-color: #c0392b;
+    color: red;
+  }
+  &.redBorder::placeholder {
+    color: #c0392b;
+  }
 `;
 
 export default function Input(props) {

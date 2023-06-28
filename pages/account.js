@@ -62,7 +62,6 @@ export default function AccountPage() {
     });
     setLoading(false);
   }, []);
-  useEffect(() => {}, []);
 
   return (
     <>
@@ -93,10 +92,19 @@ export default function AccountPage() {
           <div>
             <RevealWrapper delay={100}>
               <WhiteBox>
-                <h2>account details</h2>
+                {session ? (
+                  <h2>account details</h2>
+                ) : (
+                  <>
+                    <p>Log in to save products to your wishlist</p>
+                    <Button primary onClick={() => login()}>
+                      Login with google
+                    </Button>
+                  </>
+                )}
                 {loading && <Spinner fullWidth={true} />}
 
-                {!loading && (
+                {!loading && session && (
                   <>
                     <Input
                       type="text"

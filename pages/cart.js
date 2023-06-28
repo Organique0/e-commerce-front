@@ -84,6 +84,42 @@ export default function CartPage() {
   const [streetAddress, setStreetAddress] = useState("");
   const [country, setCountry] = useState("");
   const [loading, setLoading] = useState(false);
+  const [validationTriggered, setValidationTriggered] = useState(false);
+  const [formData, setFormData] = useState({
+    products: "",
+    name: "",
+    email: "",
+    city: "",
+    postalCode: "",
+    streetAddress: "",
+    country: ""
+  });
+
+  const [formValid, setFormValid] = useState(false);
+
+  const validateForm = () => {
+    const formFields = Object.keys(formData);
+    let isValid = true;
+
+    formFields.forEach((field) => {
+      if (validationTriggered && formData[field] === "") {
+        isValid = false;
+      }
+    });
+    setFormValid(isValid);
+  };
+
+  const handlePaymentClick = () => {
+    setValidationTriggered(true);
+    validateForm();
+
+    if (formValid) {
+      doPayment();
+    }
+  };
+  const getInputClassName = (fieldName) => {
+    return validationTriggered && formData[fieldName] === "" ? "redBorder" : "";
+  };
 
   const router = useRouter();
 
@@ -106,12 +142,14 @@ export default function CartPage() {
   useEffect(() => {
     setLoading(true);
     axios.get("/api/address").then((res) => {
-      setName(res.data.name);
-      setStreetAddress(res.data.streetAddress);
-      setCity(res.data.city);
-      setPostalCode(res.data.postalCode);
-      setCountry(res.data.country);
-      setEmail(res.data.email);
+      if (res && res.data) {
+        setName(res.data.name);
+        setStreetAddress(res.data.streetAddress);
+        setCity(res.data.city);
+        setPostalCode(res.data.postalCode);
+        setCountry(res.data.country);
+        setEmail(res.data.email);
+      }
     });
     setLoading(false);
   }, []);
@@ -244,48 +282,75 @@ export default function CartPage() {
                     <Input
                       type="text"
                       placeholder="name"
-                      value={name}
+                      value={formData.name}
                       name="name"
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      className={getInputClassName("name")}
                     />
                     <Input
                       type="text"
                       placeholder="email"
-                      value={email}
+                      value={formData.email}
                       name="email"
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
+                      className={getInputClassName("email")}
                     />
                     <CityHolder>
                       <Input
                         type="text"
                         placeholder="city"
-                        value={city}
+                        value={formData.city}
                         name="city"
-                        onChange={(e) => setCity(e.target.value)}
+                        onChange={(e) =>
+                          setFormData({ ...formData, city: e.target.value })
+                        }
+                        className={getInputClassName("city")}
                       />
                       <Input
                         type="text"
                         name="postalCode"
                         placeholder="postal code"
-                        value={postalCode}
-                        onChange={(e) => setPostalCode(e.target.value)}
+                        value={formData.postalCode}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            postalCode: e.target.value
+                          })
+                        }
+                        className={getInputClassName("postalCode")}
                       />
                     </CityHolder>
                     <Input
                       type="text"
                       placeholder="street address"
-                      value={streetAddress}
+                      value={formData.streetAddress}
                       name="streetAddress"
-                      onChange={(e) => setStreetAddress(e.target.value)}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          streetAddress: e.target.value
+                        })
+                      }
+                      className={getInputClassName("streetAddress")}
                     />
                     <Input
                       type="text"
                       placeholder="country"
-                      value={country}
+                      value={formData.country}
                       name="country"
-                      onChange={(e) => setCountry(e.target.value)}
+                      onChange={(e) =>
+                        setFormData({ ...formData, country: e.target.value })
+                      }
+                      className={getInputClassName("country")}
                     />
-                    <Button block black onClick={doPayment}>
+                    {validationTriggered && (
+                      <div>enter missing information</div>
+                    )}
+                    <Button block black onClick={handlePaymentClick}>
                       Continue to payment
                     </Button>
                   </>

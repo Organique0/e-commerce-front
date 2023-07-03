@@ -77,16 +77,12 @@ export default function CartPage() {
   const { cartProducts, addProduct, removeProduct, clearCart } =
     useContext(CartContext);
   const [products, setProducts] = useState([]);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [city, setCity] = useState("");
-  const [postalCode, setPostalCode] = useState("");
-  const [streetAddress, setStreetAddress] = useState("");
-  const [country, setCountry] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [formValid, setFormValid] = useState(false);
   const [validationTriggered, setValidationTriggered] = useState(false);
+
   const [formData, setFormData] = useState({
-    products: "",
     name: "",
     email: "",
     city: "",
@@ -95,28 +91,30 @@ export default function CartPage() {
     country: ""
   });
 
-  const [formValid, setFormValid] = useState(false);
-
-  const validateForm = () => {
+  async function validateForm() {
     const formFields = Object.keys(formData);
     let isValid = true;
 
     formFields.forEach((field) => {
-      if (validationTriggered && formData[field] === "") {
+      if (formData[field] === "") {
         isValid = false;
       }
     });
-    setFormValid(isValid);
-  };
 
-  const handlePaymentClick = () => {
+    return isValid; // Return the value of isValid
+  }
+
+  async function handlePaymentClick() {
     setValidationTriggered(true);
-    validateForm();
 
-    if (formValid) {
+    const formIsValid = await validateForm(); // Wait for validateForm to finish and get the returned value
+    if (formIsValid) {
       doPayment();
+      setValidationTriggered(false);
     }
-  };
+    setFormValid(formIsValid); // Update formValid state with the value
+  }
+
   const getInputClassName = (fieldName) => {
     return validationTriggered && formData[fieldName] === "" ? "redBorder" : "";
   };
@@ -135,24 +133,10 @@ export default function CartPage() {
 
   useEffect(() => {
     if (router.query.success === "true") {
+      console.log("clearCart");
       clearCart();
     }
   }, [router]);
-
-  useEffect(() => {
-    setLoading(true);
-    axios.get("/api/address").then((res) => {
-      if (res && res.data) {
-        setName(res.data.name);
-        setStreetAddress(res.data.streetAddress);
-        setCity(res.data.city);
-        setPostalCode(res.data.postalCode);
-        setCountry(res.data.country);
-        setEmail(res.data.email);
-      }
-    });
-    setLoading(false);
-  }, []);
 
   function moreOfThisProduct(id) {
     addProduct(id);
@@ -164,12 +148,12 @@ export default function CartPage() {
 
   async function doPayment() {
     const response = await axios.post("/api/checkout", {
-      name,
-      email,
-      city,
-      postalCode,
-      streetAddress,
-      country,
+      name: formData["name"],
+      email: formData["email"],
+      city: formData["city"],
+      postalCode: formData["postalCode"],
+      streetAddress: formData["streetAddress"],
+      country: formData["country"],
       cartProducts
     });
     if (response.data.url) {
@@ -192,6 +176,20 @@ export default function CartPage() {
           <ColumnsWrapper>
             <WhiteBox>
               <p>thank you for your order.</p>
+            </WhiteBox>
+          </ColumnsWrapper>
+        </Center>
+      </>
+    );
+  }
+  if (router.query.canceled === "true") {
+    return (
+      <>
+        <Header />
+        <Center>
+          <ColumnsWrapper>
+            <WhiteBox>
+              <p>Your payment failed</p>
             </WhiteBox>
           </ColumnsWrapper>
         </Center>
@@ -347,7 +345,7 @@ export default function CartPage() {
                       }
                       className={getInputClassName("country")}
                     />
-                    {validationTriggered && (
+                    {validationTriggered && !formValid && (
                       <div>enter missing information</div>
                     )}
                     <Button block black onClick={handlePaymentClick}>

@@ -11,6 +11,8 @@ import axios from "axios";
 import Spinner from "@/components/Spinner";
 import ProductBox from "@/components/ProductBox";
 import { WishContext } from "@/components/WishContext";
+import Tabs from "@/components/Tabs";
+import SingleOrder from "@/components/SingleOrder";
 
 const CityHolder = styled.div`
   display: flex;
@@ -38,8 +40,12 @@ export default function AccountPage() {
   const [country, setCountry] = useState("");
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("Orders");
+  const [orders, setOrders] = useState([]);
+  const [ordersLoaded, setOrderLoaded] = useState(false);
 
   const { wishedProducts, wishLoading } = useContext(WishContext);
+
   async function login() {
     await signIn("google");
   }
@@ -60,6 +66,9 @@ export default function AccountPage() {
         setEmail(res.data.email);
       }
     });
+    axios.get("/api/orders").then((response) => {
+      setOrders(response.data);
+    });
     setLoading(false);
   }, []);
 
@@ -72,20 +81,38 @@ export default function AccountPage() {
           <div>
             <RevealWrapper delay={0}>
               <WhiteBox>
-                <h2>wishlist</h2>
-                {wishedProducts.length === 0 && (
+                <Tabs
+                  tabs={["Wishlist", "Orders"]}
+                  active={activeTab}
+                  onChange={setActiveTab}
+                />
+                {activeTab === "Wishlist" && (
                   <>
-                    <p>Your wishlist is empty.</p>
+                    {wishedProducts.length === 0 && (
+                      <>
+                        <p>Your wishlist is empty.</p>
+                      </>
+                    )}
+                    <WishedProductsGrid>
+                      {wishLoading && <Spinner fullWidth={true} />}
+                      {!wishLoading &&
+                        wishedProducts.length > 0 &&
+                        wishedProducts.map((wp) => (
+                          <ProductBox {...wp} key={wp._id} />
+                        ))}
+                    </WishedProductsGrid>
                   </>
                 )}
-                <WishedProductsGrid>
-                  {wishLoading && <Spinner fullWidth={true} />}
-                  {!wishLoading &&
-                    wishedProducts.length > 0 &&
-                    wishedProducts.map((wp) => (
-                      <ProductBox {...wp} key={wp._id} />
-                    ))}
-                </WishedProductsGrid>
+                {activeTab === "Orders" && (
+                  <>
+                    {loading && <Spinner fullWidth={true} />}
+                    <div>
+                      {typeof orders === "object" &&
+                        orders.map((o) => <SingleOrder {...o} key={o._id} />)}
+                      {typeof orders === "string" && <p>{orders}</p>}
+                    </div>
+                  </>
+                )}
               </WhiteBox>
             </RevealWrapper>
           </div>
@@ -96,7 +123,7 @@ export default function AccountPage() {
                   <h2>account details</h2>
                 ) : (
                   <>
-                    <p>Log in to save products to your wishlist</p>
+                    <p>Log in to save your wishlist</p>
                     <Button primary onClick={() => login()}>
                       Login with google
                     </Button>

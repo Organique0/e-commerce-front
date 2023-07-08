@@ -80,10 +80,7 @@ export default function Featured({ product }) {
           </Column>
           <Column>
             <RevealWrapper delay={0}>
-              <img
-                className={"main"}
-                src="https://www.a1.si/o/commerce-media/products/293672195/prenosni-racunalnik-apple-macbook-prom2-13-3-8c-256gb/294144608/MacBook_Pro_13_in_Silver_PDP_Image_Position-1__WWEN.png?download=false"
-              ></img>
+              <img className={"main"} src={product.images?.[0]}></img>
             </RevealWrapper>
           </Column>
         </ColumnsWrapper>

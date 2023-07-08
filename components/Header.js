@@ -45,7 +45,7 @@ const SearchLink = styled(Link)`
   text-decoration: none;
   display: block;
   min-width: 20px;
-  padding-top:2px;
+  padding-top: 2px;
   @media screen and (max-width: 586px) {
     display: none;
   }

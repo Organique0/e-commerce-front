@@ -7,8 +7,11 @@ const ProductGrid = styled.div`
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 20px;
   padding-top: 20px;
-  @media screen and (max-width: 586px) {
+  @media screen and (max-width: 750px) and (min-width: 450px) {
     grid-template-columns: 1fr 1fr;
+  }
+  @media screen and (max-width: 450px) {
+    grid-template-columns: 1fr;
   }
 `;
 

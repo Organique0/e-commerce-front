@@ -12,7 +12,10 @@ import Spinner from "@/components/Spinner";
 import {
   CategoryHeader,
   FiltersWrapper,
-  Filter
+  Filter,
+  SortingFilter,
+  FiltersAndProductsWrapper,
+  ProductsWrapper
 } from "@/components/FiltersStyles";
 
 export default function SubcategoryPage({ products, category }) {
@@ -56,50 +59,58 @@ export default function SubcategoryPage({ products, category }) {
       <Center>
         <CategoryHeader>
           <Title>{subCategory}</Title>
+          <SortingFilter>
+            <span>sorting:</span>
+            <select value={sort} onChange={(e) => setSort(e.target.value)}>
+              <option value="price-asc">price, lowest first</option>
+              <option value="price-desc">price, highest first</option>
+              <option value="_id-desc">newest first</option>
+              <option value="_id-asc">oldest first</option>
+            </select>
+          </SortingFilter>
+        </CategoryHeader>
+        <FiltersAndProductsWrapper>
           <FiltersWrapper>
             {category.properties.map((prop, index) => (
               <Filter key={`${prop._id}-${index}`}>
                 <span>{prop.name}:</span>
-                <select
-                  onChange={(e) => {
-                    handleFilterChange(prop.name, e.target.value); // Use e.target.value to get the selected value
-                  }}
-                  value={filters.find((f) => f.name === prop.name)?.value || ""} // Access the value property
-                >
-                  <option key={`${prop._id}-${index}-null`} value="all">
-                    all
-                  </option>
+                <div>
                   {prop.values.map((value, valueIndex) => (
-                    <option
-                      value={value}
-                      key={`${prop._id}-${index}-${valueIndex}`}
-                    >
-                      {value}
-                    </option>
+                    <div key={`${prop._id}-${index}-${valueIndex}`}>
+                      <input
+                        type="checkbox"
+                        id={`${prop._id}-${index}-${valueIndex}`}
+                        value={value}
+                        checked={
+                          filters.find((f) => f.name === prop.name)?.value ===
+                          value
+                        }
+                        onChange={(e) =>
+                          handleFilterChange(
+                            prop.name,
+                            e.target.checked ? value : "all"
+                          )
+                        }
+                      />
+                      <label htmlFor={`${prop._id}-${index}-${valueIndex}`}>
+                        {value}
+                      </label>
+                    </div>
                   ))}
-                </select>
+                </div>
               </Filter>
             ))}
-            <Filter>
-              <span>sorting:</span>
-              <select value={sort} onChange={(e) => setSort(e.target.value)}>
-                <option value="price-asc">price, lowest first</option>
-                <option value="price-desc">price, highest first</option>
-                <option value="_id-desc">newest first</option>
-                <option value="_id-asc">oldest first</option>
-              </select>
-            </Filter>
           </FiltersWrapper>
-        </CategoryHeader>
-        {loadingProuducts && <Spinner fullWidth />}
-        {!loadingProuducts && (
-          <div>
-            {currentProducts.length > 0 && (
-              <ProductsGrid products={currentProducts} />
-            )}
-            {currentProducts.length === 0 && <div>No products found</div>}
-          </div>
-        )}
+          {loadingProuducts && <Spinner fullWidth />}
+          {!loadingProuducts && (
+            <ProductsWrapper>
+              {currentProducts.length > 0 && (
+                <ProductsGrid products={currentProducts} />
+              )}
+              {currentProducts.length === 0 && <div>No products found</div>}
+            </ProductsWrapper>
+          )}
+        </FiltersAndProductsWrapper>
       </Center>
     </>
   );

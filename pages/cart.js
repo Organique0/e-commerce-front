@@ -19,6 +19,18 @@ const ColumnsWrapper = styled.div`
   @media screen and (max-width: 775px) {
     grid-template-columns: 1fr;
   }
+  table thead tr th:nth-child(3),
+  table tbody tr td:nth-child(3),
+  table tbody tr.subtotal td:nth-child(2) {
+    text-align: right;
+  }
+  table tr.subtotal td {
+    padding: 10px 0;
+  }
+  table tr.total td {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
 `;
 
 const ProductInfoCell = styled.td`
@@ -78,7 +90,7 @@ export default function CartPage() {
     useContext(CartContext);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [shipping, setShipping] = useState(null);
   const [formValid, setFormValid] = useState(false);
   const [validationTriggered, setValidationTriggered] = useState(false);
 
@@ -133,10 +145,15 @@ export default function CartPage() {
 
   useEffect(() => {
     if (router.query.success === "true") {
-      console.log("clearCart");
       clearCart();
     }
   }, [router]);
+
+  useEffect(() => {
+    axios.get("/api/settings?name=shippingFee").then((response) => {
+      setShipping(parseInt(response.data.value));
+    });
+  }, []);
 
   function moreOfThisProduct(id) {
     addProduct(id);
@@ -161,11 +178,11 @@ export default function CartPage() {
     }
   }
 
-  let total = 0;
+  let productsTotal = 0;
   for (const productId of cartProducts) {
     const price =
       products.find((product) => product._id === productId)?.price || 0;
-    total += price;
+    productsTotal += price;
   }
 
   if (router.query.success === "true") {
@@ -260,9 +277,26 @@ export default function CartPage() {
                       </tr>
                     ))}
                     <tr>
-                      <td></td>
-                      <td></td>
-                      <td>{total}€</td>
+                      <td colSpan={3}>
+                        <hr />
+                      </td>
+                    </tr>
+                    <tr className="subtotal">
+                      <td colSpan={2}>Products price:</td>
+                      <td>{productsTotal}€</td>
+                    </tr>
+                    <tr className="subtotal">
+                      <td colSpan={2}>Shipping:</td>
+                      <td>{shipping}€</td>
+                    </tr>
+                    <tr>
+                      <td colSpan={3}>
+                        <hr />
+                      </td>
+                    </tr>
+                    <tr className="subtotal total">
+                      <td colSpan={2}>Total:</td>
+                      <td>{productsTotal + shipping}€</td>
                     </tr>
                   </tbody>
                 </Table>

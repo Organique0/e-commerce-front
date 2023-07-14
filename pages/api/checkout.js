@@ -7,10 +7,9 @@ import { Setting } from "@/models/setting";
 const stripe = require("stripe")(process.env.STRIPE_SK);
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    res.json();
-    return;
-  }
+  if (req.method == "POST") {
+
+  
   const {
     name,
     email,
@@ -64,6 +63,7 @@ export default async function handler(req, res) {
     success_url: process.env.PUBLIC_URL + "/cart?success=true",
     cancel_url: process.env.PUBLIC_URL + "/cart?canceled=true",
     metadata: { orderId: orderDoc._id.toString() },
+    allow_promotion_codes:true,
     shipping_options: [
       {
         shipping_rate_data: {
@@ -78,4 +78,4 @@ export default async function handler(req, res) {
   res.json({
     url: stripeSession.url
   });
-}
+}}

@@ -9,6 +9,7 @@ const StyledInput = styled.input`
   box-sizing: border-box;
   border-radius: 5px;
   font-size: 1.3rem;
+  font-family: inherit;
   &.redBorder {
     border-color: #c0392b;
     color: red;

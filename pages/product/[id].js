@@ -10,6 +10,7 @@ import { Product } from "@/models/product";
 import styled from "@emotion/styled";
 import { useContext } from "react";
 import FlyingButton from "@/components/FlyingButton";
+import ProductReviews from "@/components/ProductReviews";
 
 const ColWrap = styled.div`
   display: grid;
@@ -53,6 +54,7 @@ export default function productPage({ product }) {
             </PriceRow>
           </div>
         </ColWrap>
+        <ProductReviews product={product} />
       </Center>
     </>
   );
